@@ -1,0 +1,46 @@
+Godlyverse specification
+========================
+
+AIM
+
+A network of star systems with a sound economic model based on the models of Godley & Lavoie in which a user can affect changes via an app.
+
+INITIAL MODEL
+
+Each system will based on the SIM model initially with more complex models involving bonds, currency imports and exports being added later.
+
+The SIM model can be summarised as follows.
+
+Y = C + G
+
+where Y is GDP, C is consumption and G is government spending in some time period.
+
+Consumption is given by
+
+C = alpha1*(Y-T) + alpha2*H
+
+where T is tax paid to the government, H is the amount in household savings and alpha1 and alpha2 are parameters that can vary depending on system and user inputs.
+
+The tax T is determined by the tax rate theta:
+
+T = theta*Y
+
+In this simple model, if the user sets or can influence theta, alpha1, alpha2 and G, which I'll call the paramters, then the state of the star system is completely specified by one of C, Y or H. We will use H and calculate the others from it. So given the parameters and H, the above equations can be combined to give Y and C:
+
+Y = (G + alpha2*H) / ( 1 - alpha2*(1-theta) )
+C = Y - G
+
+SINGLE SYSTEM PROTOTYPE
+
+At first there will be just one system named Sol with an Id of zero. The database will store the Id (unique primary key), name, all parameters and state variable H (but not Y and C which can be computed) for all time-steps that have taken place.
+
+The web interface will allow the user to change all parameters (but not H) and display a table showing all parameters and state variables for all previous time steps. The update button will then advance to the next time step.
+
+CODE DESIGN
+
+index.php - the web form with minimal php code - just calling of functions.
+StarSystem.php - the class that represents a star system
+StellarDatabase.php - code for handling requests to the PDO database.
+
+
+
