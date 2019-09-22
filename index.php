@@ -13,7 +13,7 @@
          * //- Read state from DB
          * //- Save state to DB
          * //- tidy code
-         * - first git commit
+         * //- first git commit
          */
 
         require 'StellarDatabase.php';
