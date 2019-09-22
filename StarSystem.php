@@ -6,6 +6,8 @@
  * @author nalu
  */
 class StarSystem {
+    private $id;
+    private $time;
     private $name;
     private $G;
     private $theta;
@@ -13,7 +15,9 @@ class StarSystem {
     private $alpha2;
     private $H;
 
-    function __construct($name="sol",$H = 100., $theta = 0.2, $G = 30., $alpha1 = 0.2, $alpha2 = 0.2) {
+    function __construct($time=0, $id=0, $name="sol",$H = 100., $theta = 0.2, $G = 30., $alpha1 = 0.2, $alpha2 = 0.2) {
+        $this->time = $time;
+        $this->id = $id;
         $this->name = $name;
         $this->H = $H;
         $this->theta = $theta;
@@ -25,6 +29,7 @@ class StarSystem {
     function update() {
         $Y=$this->getY();
         $this->H += $Y * (1.0 - $this->theta) - $this->getC($Y);
+        $this->time++;
     }
 
     function getUpdate(){
@@ -33,14 +38,15 @@ class StarSystem {
         $all['alpha1']=$this->alpha1;
         $all['alpha2']=$this->alpha2;
         $all['H']=$this->H;
+        $all['time']=$this->time;
         
         return $all;
     }
     
     function getAll(){
-        $all=getUpdate();
+        $all=$this->getUpdate();
         $all['name']=$this->name;
-        
+        $all['id']=$this->id;
         return $all;
     }
     

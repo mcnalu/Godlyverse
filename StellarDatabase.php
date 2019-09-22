@@ -4,9 +4,11 @@ function createDatabase() {
     try {
         //open the database
         $db = new PDO('sqlite:stellar_PDO.sqlite');
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
         $db->exec("DROP TABLE StarSystems");
         //create the table
-        $db->exec("CREATE TABLE StarSystems (id INTEGER PRIMARY KEY, name TEXT, theta REAL, alpha1 REAL, alpha2 REAL, G REAL, H REAL)");
+        $db->exec("CREATE TABLE StarSystems (id INTEGER NOT NULL, time INTEGER NOT NULL, name TEXT, theta REAL, alpha1 REAL, alpha2 REAL, G REAL, H REAL, PRIMARY KEY (id,time))");
         // close the database connection
         $db = NULL;
     } catch (PDOException $e) {
@@ -18,6 +20,7 @@ function insertRow($row) {
     try {
         //open the database
         $db = new PDO('sqlite:stellar_PDO.sqlite');
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         foreach ($row as $key => $value) {
             $keys = isset($keys) ? $keys . "," . $key : $key;
@@ -26,6 +29,7 @@ function insertRow($row) {
         $sql = "INSERT INTO StarSystems ($keys)";
         $sql .= " VALUES ($values);";
         $stmt = $db->prepare($sql);
+
         foreach ($row as $key => $value) {
             $stmt->bindValue(":" . $key, $value);
         }
@@ -43,12 +47,12 @@ function updateRow($row) {
         $db = new PDO('sqlite:stellar_PDO.sqlite');
 
         $sql = "UPDATE StarSystems Set ";
-        $isFirst=TRUE;
+        $isFirst = TRUE;
         foreach ($row as $key => $value) {
             $sql .= $isFirst ? "" : ",";
-            $sql .= $key."=".$value;
-            $isFirst=FALSE;
-        }    
+            $sql .= $key . "=" . $value;
+            $isFirst = FALSE;
+        }
         echo $sql;
         $stmt = $db->prepare($sql);
         $stmt->execute();
@@ -63,40 +67,43 @@ function displayRows() {
     try {
         //open the database
         $db = new PDO('sqlite:stellar_PDO.sqlite');
-        $stmt = $db->prepare("SELECT * FROM StarSystems");
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stmt = $db->prepare("SELECT * FROM StarSystems ORDER BY id,time");
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $colNames=array_keys($result[0]);
-               print "<table border=1>";
+        $colNames = array_keys($result[0]);
+        print "<table border=1>";
         print "<tr>";
-        foreach ($colNames as $c){
+        foreach ($colNames as $c) {
             echo "<th>$c</th>";
         }
         print "</tr>";
-        print "<tr>";
-        foreach ($result as $row) {//NOTE ERROR: $row isn't an assoc array!
+        foreach ($result as $row) {
+            print "<tr>";
             foreach ($row as $key => $value) {
                 print "<td>" . $value . "</td>";
             }
+            print "</tr>";
         }
-        print "</tr></table>";
+        print "</table>";
         // close the database connection
         $db = NULL;
     } catch (PDOException $e) {
-        print 'Exception : ' . $e->getMessage();
+        echo "<p>Exception : " . $e->getMessage() . "</p>";
     }
 }
 
-function getLastRow() {
+function getLastRows() {
     try {
         //open the database
         $db = new PDO('sqlite:stellar_PDO.sqlite');
 
-        $result = $db->query('SELECT * FROM StarSystems ORDER BY id LIMIT 1');
-        $row = $result->fetch();
+        $result = $db->query('select *,max(time) from StarSystems GROUP BY id;
+');
+        $rows = $result->fetchAll(PDO::FETCH_ASSOC);
         // close the database connection
         $db = NULL;
-        return $row;
+        return $rows;
     } catch (PDOException $e) {
         print 'Exception : ' . $e->getMessage();
     }
