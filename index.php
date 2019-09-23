@@ -13,7 +13,7 @@
          * //- Histories in DB
          * //- Multiple systems in DB
          * //- update multiple systems
-         * - avoid repetition of DB opening/closing code
+         * //- avoid repetition of DB opening/closing code
          * - improve stellar creation code
          */
 
