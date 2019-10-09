@@ -31,6 +31,8 @@ CREATE TABLE StarSystems (
     theta REAL,
     alpha1 REAL,
     alpha2 REAL,
+    iota REAL,
+    xi REAL,
     G REAL,
     H REAL,
     PRIMARY KEY (id,time))
